@@ -7,11 +7,15 @@ public class CameraRotate : MonoBehaviour
 
     private float _accumulationX = 0f; // 좌우 회전 각도
     private float _accumulationY = 0f; // 위아래 회전 각도
+
     private void Update()
     {
         // 1. 마우스 입력을 받는다
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");
+
+        GameLogger.Log($"mouseX: {mouseX}, mouseY: {mouseY}");
+
         // 2. 마우스 입력에 따라 회전할 방향을 구한다
         _accumulationX += mouseX * _rotationSpeed * Time.deltaTime;
         _accumulationY += -mouseY * _rotationSpeed * Time.deltaTime;
