@@ -4,23 +4,34 @@ public class PlayerMove : MonoBehaviour
 {
     private const float Gravity = -20f;
     private const int MaxJumps = 2;
+    private const float MaxStamina = 100f;
 
     private float _yVelocity = 0f; // 위 아래 속도, 매 프레임마다 중력 가속도가 붙음
     private int _jumpCount = 0;
+    private float _stamina;
+
 
     [SerializeField] private float _moveSpeed = 7f;
     [SerializeField] private float _sprintSpeed = 12f;
     [SerializeField] private float _jumpPower = 10f;
+
+    [SerializeField] private float _staminaRecovery = 15f;
+    [SerializeField] private float _sprintCost = 10f;
+    [SerializeField] private float _jumpCost = 20f;
 
     private CharacterController _characterController;
 
     private void Awake()
     {
         _characterController = GetComponent<CharacterController>();
+        _stamina = MaxStamina;
     }
 
     private void Update()
     {
+        // 0. 스태미나 회복
+        _stamina = Mathf.Min(MaxStamina, _stamina + _staminaRecovery * Time.deltaTime);
+
         // 1. 키보드 입력을 받는다
         float h = Input.GetAxisRaw("Horizontal"); // -1, 0, 1만 반환
         float v = Input.GetAxisRaw("Vertical"); // -1, 0, 1만 반환
@@ -46,15 +57,23 @@ public class PlayerMove : MonoBehaviour
         }
 
         // 4. 점프키를 누르면 점프
-        if (Input.GetButtonDown("Jump") &&
-            _jumpCount < MaxJumps) // 입력을 하드 코딩이 아니라 중재자 패턴으로 해야지 다른 기기에서 입력이 편함
+        if (Input.GetButtonDown("Jump") && _jumpCount < MaxJumps &&
+            _stamina >= _jumpCost) // 입력을 하드 코딩이 아니라 중재자 패턴으로 해야지 다른 기기에서 입력이 편함
         {
             _yVelocity = _jumpPower;
             _jumpCount++;
+            _stamina = Mathf.Max(0, _stamina - _jumpCost);
         }
 
         // 5. 속도를 구한다
-        float currentSpeed = Input.GetButton("Sprint") ? _sprintSpeed : _moveSpeed;
+        float requiredStamina = _sprintCost * Time.deltaTime;
+        bool isSprint = Input.GetButton("Sprint") && (_stamina > requiredStamina);
+        float currentSpeed = _moveSpeed;
+        if (isSprint)
+        {
+            currentSpeed = _sprintSpeed;
+            _stamina -= requiredStamina;
+        }
 
         Vector3 velocity = direction * currentSpeed;
         velocity.y = _yVelocity;
