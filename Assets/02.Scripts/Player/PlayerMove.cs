@@ -6,6 +6,7 @@ public class PlayerMove : MonoBehaviour
     private float _yVelocity = 0f; // 위 아래 속도, 매 프레임마다 중력 가속도가 붙음
 
     [SerializeField] private float _moveSpeed = 7f;
+    [SerializeField] private float _sprintSpeed = 12f;
     [SerializeField] private float _jumpPower = 10f;
 
     private CharacterController _characterController;
@@ -37,7 +38,7 @@ public class PlayerMove : MonoBehaviour
         else
         {
             // 땅에 서있으면 중력 초기화
-            _yVelocity = 0f;
+            _yVelocity = -1f;
         }
 
         // 4. 점프키를 누르면 점프
@@ -48,7 +49,9 @@ public class PlayerMove : MonoBehaviour
         }
 
         // 5. 속도를 구한다
-        Vector3 velocity = direction * _moveSpeed;
+        float currentSpeed = Input.GetButton("Sprint") ? _sprintSpeed : _moveSpeed;
+
+        Vector3 velocity = direction * currentSpeed;
         velocity.y = _yVelocity;
 
         // 6. 속도(방향과 속력)에 따라 이동한다
