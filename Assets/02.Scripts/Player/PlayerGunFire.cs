@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 // 마우스 왼쪽 버튼을 누르면 바라보는 방향으로 총알을 발사
@@ -13,8 +14,6 @@ public class PlayerGunFire : MonoBehaviour
 
     private float _fireTimer = 0f;
     private int _bulletCount = 0;
-    private bool _isReloading = false;
-    private float _reloadingTimer;
 
     private void Start()
     {
@@ -33,26 +32,20 @@ public class PlayerGunFire : MonoBehaviour
             Shoot();
         }
 
-        if (Input.GetKeyDown(KeyCode.R) && _isReloading == false)
+        if (Input.GetKeyDown(KeyCode.R))
         {
-            _isReloading = true;
-            _reloadingTimer = 0;
-        }
-
-        if (_isReloading)
-        {
-            _reloadingTimer += Time.deltaTime;
-            if (_reloadingTimer >= _reloadingTime)
-            {
-                _isReloading = false;
-                Reloading();
-            }
+            StartCoroutine(Reloading_Coroutine());
         }
     }
 
-    private void Reloading()
+    private IEnumerator Reloading_Coroutine()
     {
+        Debug.Log("재장전 시작!");
+
+        yield return new WaitForSeconds(_reloadingTime);
         _bulletCount = _maxBulletCount;
+
+        Debug.Log("재장전 완료!");
     }
 
     private void Shoot()
