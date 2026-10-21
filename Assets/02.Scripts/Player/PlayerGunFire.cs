@@ -5,10 +5,17 @@ public class PlayerGunFire : MonoBehaviour
 {
     [SerializeField] private ParticleSystem _hitEffectPrefab;
 
+    [SerializeField] private int _maxAmmo = 50;
     [SerializeField] private float _range = 100f;
     [SerializeField] private float _damage = 10f;
     [SerializeField] private float _fireInterval = 0.1f;
     private float _fireTimer = 0f;
+    private int _loadedAmmo;
+
+    private void Start()
+    {
+        _loadedAmmo = _maxAmmo;
+    }
 
     private void Update()
     {
@@ -16,10 +23,15 @@ public class PlayerGunFire : MonoBehaviour
         _fireTimer -= Time.deltaTime;
 
         // 1. 마우스 왼쪽 버튼 입력 받기
-        if (Input.GetButton("Fire1") && _fireTimer <= 0f)
+        if (Input.GetButton("Fire1") && _fireTimer <= 0f && _loadedAmmo > 0)
         {
             _fireTimer = _fireInterval;
             Shoot();
+        }
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            _loadedAmmo = _maxAmmo;
         }
     }
 
@@ -46,5 +58,7 @@ public class PlayerGunFire : MonoBehaviour
             effect.transform.forward = hitInfo.normal; // 수직 위치로 회전
             effect.Play();
         }
+
+        _loadedAmmo--;
     }
 }
