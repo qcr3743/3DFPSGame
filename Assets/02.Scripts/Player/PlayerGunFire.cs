@@ -14,6 +14,7 @@ public class PlayerGunFire : MonoBehaviour
 
     private float _fireTimer = 0f;
     private int _bulletCount = 0;
+    private Coroutine _reloadCoroutine;
 
     private void Start()
     {
@@ -30,11 +31,18 @@ public class PlayerGunFire : MonoBehaviour
         {
             _fireTimer = _fireInterval;
             Shoot();
+
+            if (_reloadCoroutine != null)
+            {
+                StopCoroutine(_reloadCoroutine);
+                Debug.Log("재장전 취소!");
+                _reloadCoroutine = null;
+            }
         }
 
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.R) && _reloadCoroutine == null)
         {
-            StartCoroutine(Reloading_Coroutine());
+            _reloadCoroutine = StartCoroutine(Reloading_Coroutine());
         }
     }
 
