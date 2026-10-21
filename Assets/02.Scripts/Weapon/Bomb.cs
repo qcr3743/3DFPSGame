@@ -5,13 +5,42 @@ public class Bomb : MonoBehaviour
 {
     [SerializeField] private ParticleSystem _explosionEffectPrefab;
 
+    private BombPool _pool;
+    private Rigidbody _rigidbody;
+    private bool _isExploded;
+
+    private void Awake()
+    {
+        _rigidbody = GetComponent<Rigidbody>();
+    }
+
+    // 풀이 만들 때 한 번 불러줌
+    public void Init(BombPool pool)
+    {
+        _pool = pool;
+    }
+
+    // 켜질 때마다 초기화
+    private void OnEnable()
+    {
+        _isExploded = false;
+        _rigidbody.linearVelocity = Vector3.zero; // Unity 6 이전: velocity
+        _rigidbody.angularVelocity = Vector3.zero;
+    }
+
     // 다른 콜라이더와 부딪힌 순간 실행되는 메서드
     private void OnCollisionEnter(Collision collision)
     {
+        if (_isExploded)
+        {
+            return; // 같은 프레임 중복 충돌 방지
+        }
+
+        _isExploded = true;
+
         ParticleSystem effect = Instantiate(_explosionEffectPrefab, transform.position, Quaternion.identity);
         effect.Play();
 
-        // Todo. 오브젝트 풀링 적용
-        Destroy(gameObject);
+        _pool.Return(this); // Destroy 대신 풀로 복귀
     }
 }

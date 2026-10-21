@@ -5,16 +5,20 @@ public class PlayerGunFire : MonoBehaviour
 {
     [SerializeField] private ParticleSystem _hitEffectPrefab;
 
-    [SerializeField] private int _maxAmmo = 50;
+    [SerializeField] private int _maxBulletCount = 50;
+    [SerializeField] private float _reloadingTime = 3f;
     [SerializeField] private float _range = 100f;
     [SerializeField] private float _damage = 10f;
     [SerializeField] private float _fireInterval = 0.1f;
+
     private float _fireTimer = 0f;
-    private int _loadedAmmo;
+    private int _bulletCount = 0;
+    private bool _isReloading = false;
+    private float _reloadingTimer;
 
     private void Start()
     {
-        _loadedAmmo = _maxAmmo;
+        _bulletCount = _maxBulletCount;
     }
 
     private void Update()
@@ -23,16 +27,32 @@ public class PlayerGunFire : MonoBehaviour
         _fireTimer -= Time.deltaTime;
 
         // 1. 마우스 왼쪽 버튼 입력 받기
-        if (Input.GetButton("Fire1") && _fireTimer <= 0f && _loadedAmmo > 0)
+        if (Input.GetButton("Fire1") && _fireTimer <= 0f && _bulletCount > 0)
         {
             _fireTimer = _fireInterval;
             Shoot();
         }
 
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.R) && _isReloading == false)
         {
-            _loadedAmmo = _maxAmmo;
+            _isReloading = true;
+            _reloadingTimer = 0;
         }
+
+        if (_isReloading)
+        {
+            _reloadingTimer += Time.deltaTime;
+            if (_reloadingTimer >= _reloadingTime)
+            {
+                _isReloading = false;
+                Reloading();
+            }
+        }
+    }
+
+    private void Reloading()
+    {
+        _bulletCount = _maxBulletCount;
     }
 
     private void Shoot()
@@ -59,6 +79,6 @@ public class PlayerGunFire : MonoBehaviour
             effect.Play();
         }
 
-        _loadedAmmo--;
+        _bulletCount--;
     }
 }
