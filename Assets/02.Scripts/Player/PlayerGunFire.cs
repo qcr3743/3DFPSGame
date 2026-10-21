@@ -14,14 +14,14 @@ public class PlayerGunFire : MonoBehaviour
 
     private float _fireTimer = 0f;
     private int _bulletCount = 0;
-    private Awaitable _reloadAwaitable;
+    private Coroutine _reloadCoroutine;
 
     private void Start()
     {
         _bulletCount = _maxBulletCount;
     }
 
-    private async void Update()
+    private void Update()
     {
         // 0. 발사 타이머를 지난 시간만큼 줄인다
         _fireTimer -= Time.deltaTime;
@@ -32,25 +32,25 @@ public class PlayerGunFire : MonoBehaviour
             _fireTimer = _fireInterval;
             Shoot();
 
-            if (_reloadAwaitable != null)
+            if (_reloadCoroutine != null)
             {
-                _reloadAwaitable.Cancel();
+                StopCoroutine(_reloadCoroutine);
                 Debug.Log("재장전 취소!");
-                _reloadAwaitable = null;
+                _reloadCoroutine = null;
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.R) && _reloadAwaitable == null)
+        if (Input.GetKeyDown(KeyCode.R) && _reloadCoroutine == null)
         {
-            _reloadAwaitable = ReloadingAsync();
+            _reloadCoroutine = StartCoroutine(Reloading_Coroutine());
         }
     }
 
-    private async Awaitable ReloadingAsync()
+    private IEnumerator Reloading_Coroutine()
     {
         Debug.Log("재장전 시작!");
 
-        await Awaitable.WaitForSecondsAsync(_reloadingTime);
+        yield return new WaitForSeconds(_reloadingTime);
         _bulletCount = _maxBulletCount;
 
         Debug.Log("재장전 완료!");
