@@ -11,7 +11,7 @@ public enum ZombieState
 {
     Idle, // 대기: 제자리에서 플레이어를 기다림
     Trace, // 추격: 플레이어를 쫓아감
-    Comback, // 복귀: 처음 자리로 돌아감
+    Comeback, // 복귀: 처음 자리로 돌아감
     Attack, // 공격: 일정 시간마다 플레이어를 때림
     Hit, // 피격: 공격(총알, 폭탄)을 받아 잠깐 멈칫함
     Death // 죽음: 쓰러지고 잠시 뒤 사라짐
@@ -22,15 +22,18 @@ public class Zombie : MonoBehaviour
     [Header("스탯")]
     [SerializeField] private float _detectDistance = 8f;
 
+    [SerializeField] private float _combackDistance = 15f; // 처음 자리에서 멀어지면 돌아가는 거리
     [SerializeField] private float _moveSpeed = 5f;
 
     private CharacterController _controller;
+    private Vector3 _startPosition;
     private GameObject _player;
     private ZombieState _state = ZombieState.Idle;
 
     private void Start()
     {
         _controller = GetComponent<CharacterController>();
+        _startPosition = transform.position;
         _player = GameObject.FindWithTag("Player");
     }
 
@@ -44,8 +47,8 @@ public class Zombie : MonoBehaviour
             case ZombieState.Trace:
                 Trace();
                 break;
-            case ZombieState.Comback:
-                Comback();
+            case ZombieState.Comeback:
+                Comeback();
                 break;
             case ZombieState.Attack:
                 Attack();
@@ -75,6 +78,13 @@ public class Zombie : MonoBehaviour
     {
         // Todo. Run 애니메이션 실행
 
+        if (Vector3.Distance(transform.position, _startPosition) > _combackDistance)
+        {
+            Debug.Log($"{_state} -> Comeback");
+            _state = ZombieState.Comeback;
+            return;
+        }
+
         Vector3 direction = _player.transform.position - transform.position;
         direction.y = 0f;
         direction.Normalize();
@@ -83,8 +93,21 @@ public class Zombie : MonoBehaviour
         _controller.SimpleMove(direction * _moveSpeed);
     }
 
-    private void Comback()
+    private void Comeback()
     {
+        if (Vector3.Distance(transform.position, _startPosition) < 1f)
+        {
+            Debug.Log($"{_state} -> Idle");
+            _state = ZombieState.Idle;
+            return;
+        }
+
+        Vector3 direction = _startPosition - transform.position;
+        direction.y = 0f;
+        direction.Normalize();
+
+        transform.forward = direction;
+        _controller.SimpleMove(direction * _moveSpeed);
     }
 
     private void Attack()
