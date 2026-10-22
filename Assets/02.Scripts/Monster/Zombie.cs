@@ -1,5 +1,5 @@
+using System.Collections;
 using UnityEngine;
-using UnityEngine.AdaptivePerformance.Provider;
 
 // FSM(유한 상태 머신): 유한개의 상태가 있고, 상태마다 행동을 다르게 함으로써 AI를 구현하는 유명한 방법
 // - 상태: 객체가 가질 수 있는 어떤 조건이나 상황
@@ -23,8 +23,12 @@ public class Zombie : MonoBehaviour
     [SerializeField] private float _detectDistance = 8f;
 
     [SerializeField] private float _combackDistance = 15f; // 처음 자리에서 멀어지면 돌아가는 거리
+    [SerializeField] private float _attackRange = 1.5f;
+    [SerializeField] private float _attackInterval = 1.2f;
     [SerializeField] private float _moveSpeed = 5f;
+    [SerializeField] private float _health = 30f;
 
+    private float _attackTimer = 0f;
     private CharacterController _controller;
     private Vector3 _startPosition;
     private GameObject _player;
@@ -53,11 +57,48 @@ public class Zombie : MonoBehaviour
             case ZombieState.Attack:
                 Attack();
                 break;
-            case ZombieState.Hit:
-                break;
-            case ZombieState.Death:
-                break;
         }
+    }
+
+    // 데미지를 받음
+    public void TakeDamage(float damage)
+    {
+        if (_state == ZombieState.Death)
+        {
+            return;
+        }
+
+
+        _health -= damage;
+
+        StopAllCoroutines();
+
+        if (_health > 0f)
+        {
+            // 잠깐 멈칫
+            Debug.Log($"{_state} -> Hit");
+            _state = ZombieState.Hit;
+            StartCoroutine(Hit_Coroutine());
+        }
+        else
+        {
+            Debug.Log($"{_state} -> Death");
+            _state = ZombieState.Death;
+            StartCoroutine(Death_Coroutine());
+        }
+    }
+
+    private IEnumerator Hit_Coroutine()
+    {
+        yield return new WaitForSeconds(0.3f);
+        Debug.Log($"{_state} -> Trace");
+        _state = ZombieState.Trace;
+    }
+
+    private IEnumerator Death_Coroutine()
+    {
+        _controller.enabled = false;
+        yield return new WaitForSeconds(0.5f);
     }
 
     private void Idle()
@@ -82,6 +123,15 @@ public class Zombie : MonoBehaviour
         {
             Debug.Log($"{_state} -> Comeback");
             _state = ZombieState.Comeback;
+            return;
+        }
+
+        // 플레이어가 공격 거리 안이면 공격
+        if (Vector3.Distance(transform.position, _player.transform.position) <= _attackRange)
+        {
+            _attackTimer = 0f;
+            Debug.Log($"{_state} -> Attack");
+            _state = ZombieState.Attack;
             return;
         }
 
@@ -112,5 +162,22 @@ public class Zombie : MonoBehaviour
 
     private void Attack()
     {
+        // 플레이어가 공격 사정 거리 밖으로 나가면 추격 개시
+        float distance = Vector3.Distance(transform.position, _player.transform.position);
+        if (distance > _attackRange)
+        {
+            Debug.Log($"{_state} -> Trace");
+            _state = ZombieState.Trace;
+        }
+
+        _attackTimer += Time.deltaTime;
+
+        if (_attackTimer >= _attackInterval)
+        {
+            //Todo. 공격애니메이션 실행
+            //Todo. 플레이어 공격
+            Debug.Log($"플레이어 공격");
+            _attackTimer = 0f;
+        }
     }
 }
