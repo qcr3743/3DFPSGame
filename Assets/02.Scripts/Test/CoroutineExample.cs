@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class CoroutineTest : MonoBehaviour
+public class CoroutineExample : MonoBehaviour
 {
     // 매 초다마 시작 -> 1초 -> 2초 -> 3초를 센 다음에 특정 로그를 출력하고 싶음
     // 유니티의 코루틴:
