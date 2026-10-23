@@ -26,6 +26,7 @@ public class Zombie : MonoBehaviour, IDamageable
     [SerializeField] private float _attackRange = 1.5f;
     [SerializeField] private float _attackInterval = 1.2f;
     [SerializeField] private float _moveSpeed = 5f;
+    [SerializeField] private float _maxHealth = 30f;
     [SerializeField] private float _health = 30f;
 
     [SerializeField] private GameObject _bloodSprayPrefab;
@@ -34,10 +35,15 @@ public class Zombie : MonoBehaviour, IDamageable
     private CharacterController _controller;
     private Vector3 _startPosition;
     private GameObject _player;
+
+    public float MaxHealth => _maxHealth;
+    public float Health => _health;
+
     private ZombieState _state = ZombieState.Idle;
 
     private void Start()
     {
+        _health = _maxHealth;
         _controller = GetComponent<CharacterController>();
         _startPosition = transform.position;
         _player = GameObject.FindWithTag("Player");
