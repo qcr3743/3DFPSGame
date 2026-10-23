@@ -25,6 +25,7 @@ public class Zombie : MonoBehaviour, IDamageable
     [SerializeField] private float _combackDistance = 15f; // 처음 자리에서 멀어지면 돌아가는 거리
     [SerializeField] private float _attackRange = 1.5f;
     [SerializeField] private float _attackInterval = 1.2f;
+    [SerializeField] private float _attackDamage = 10f;
     [SerializeField] private float _moveSpeed = 5f;
     [SerializeField] private float _maxHealth = 30f;
     [SerializeField] private float _health = 30f;
@@ -187,7 +188,15 @@ public class Zombie : MonoBehaviour, IDamageable
         if (_attackTimer >= _attackInterval)
         {
             //Todo. 공격애니메이션 실행
-            //Todo. 플레이어 공격
+            DamageInfo damageInfo = new DamageInfo()
+            {
+                Value = _attackDamage,
+                HitPoint = _player.transform.position,
+                HitNormal = (transform.position - _player.transform.forward).normalized
+            };
+
+            _player.GetComponent<IDamageable>().TakeDamage(damageInfo);
+
             Debug.Log($"플레이어 공격");
             _attackTimer = 0f;
         }

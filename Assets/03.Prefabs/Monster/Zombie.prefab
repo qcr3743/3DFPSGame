@@ -390,6 +390,7 @@ GameObject:
   - component: {fileID: 2517605745376078738}
   - component: {fileID: 927753276770261467}
   - component: {fileID: 3882162853212833950}
+  - component: {fileID: 7288149785047558471}
   m_Layer: 9
   m_Name: Zombie
   m_TagString: Untagged
@@ -513,8 +514,22 @@ MonoBehaviour:
   _attackRange: 1.5
   _attackInterval: 1.2
   _moveSpeed: 5
+  _maxHealth: 30
   _health: 30
   _bloodSprayPrefab: {fileID: 1000013355911406, guid: d32aa916f50cac94db11e6f19821a58f, type: 3}
+--- !u!114 &7288149785047558471
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7617649081539253904}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbcb8caaca1ae4c4d96dd00ae1d38dfa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ZombieHealthBar
+  _slider: {fileID: 1023003094367587902}
 --- !u!1 &7912520643005477305
 GameObject:
   m_ObjectHideFlags: 0
