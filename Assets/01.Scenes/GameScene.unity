@@ -805,9 +805,9 @@ GameObject:
   - component: {fileID: 506122740}
   - component: {fileID: 506122739}
   - component: {fileID: 506122738}
+  - component: {fileID: 506122743}
   - component: {fileID: 506122741}
   - component: {fileID: 506122742}
-  - component: {fileID: 506122743}
   - component: {fileID: 506122744}
   - component: {fileID: 506122745}
   m_Layer: 7
@@ -1333,6 +1333,7 @@ MonoBehaviour:
   _attackInterval: 1.2
   _moveSpeed: 5
   _health: 30
+  _bloodEffectPrefab: {fileID: 0}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0

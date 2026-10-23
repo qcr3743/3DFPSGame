@@ -68,8 +68,7 @@ public class Drum : MonoBehaviour, IDamageable
         // 1. 드럼통들에게 데미지를 줌
         foreach (Collider col in colliders)
         {
-            col.GetComponent<Zombie>()?.TakeDamage(_damage);
-            col.GetComponent<Drum>()?.TakeDamage(_damage);
+            col.GetComponent<IDamageable>()?.TakeDamage(_damage);
         }
     }
 }

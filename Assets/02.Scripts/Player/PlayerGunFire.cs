@@ -79,18 +79,22 @@ public class PlayerGunFire : MonoBehaviour
             effect.transform.forward = hitInfo.normal; // 수직 위치로 회전
             effect.Play();
 
-            // 맞은 대상이 좀비라면 TakeDamage
+            if (hitInfo.collider.TryGetComponent(out IDamageable damageable))
+            {
+                damageable.TakeDamage(_damage);
+            }
+
+            /*
             if (hitInfo.collider.TryGetComponent(out Zombie zombie))
             {
                 zombie.TakeDamage(_damage);
             }
-
             if (hitInfo.collider.TryGetComponent(out Drum drum))
             {
                 drum.TakeDamage(_damage);
             }
-
             hitInfo.collider.GetComponent<Box>()?.TakeDamage(_damage);
+            */
         }
 
         _bulletCount--;

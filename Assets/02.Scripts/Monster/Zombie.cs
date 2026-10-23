@@ -28,6 +28,8 @@ public class Zombie : MonoBehaviour, IDamageable
     [SerializeField] private float _moveSpeed = 5f;
     [SerializeField] private float _health = 30f;
 
+    [SerializeField] private ParticleSystem _bloodEffectPrefab;
+
     private float _attackTimer = 0f;
     private CharacterController _controller;
     private Vector3 _startPosition;
@@ -75,6 +77,8 @@ public class Zombie : MonoBehaviour, IDamageable
 
         if (_health > 0f)
         {
+            //Todo. 맞은 부위에 피 이펙트 실행
+
             // 잠깐 멈칫
             Debug.Log($"{_state} -> Hit");
             _state = ZombieState.Hit;
