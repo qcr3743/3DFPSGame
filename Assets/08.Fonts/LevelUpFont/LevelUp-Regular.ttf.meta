@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: a49c9e89ce58c704a8a0eb6f6aaa5bee
+guid: 3d275240b39de7e4395639717bfce840
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,7 +9,7 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - Maplestory
+  - LevelUp
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0
