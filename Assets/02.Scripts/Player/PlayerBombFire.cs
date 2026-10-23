@@ -15,6 +15,11 @@ public class PlayerBombFire : MonoBehaviour
 
     private void Update()
     {
+        if (GameManager.Instance.State != GameState.Playing)
+        {
+            return;
+        }
+
         if (_bombCount <= 0)
         {
             return;

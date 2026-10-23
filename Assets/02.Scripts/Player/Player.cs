@@ -25,7 +25,7 @@ public class Player : MonoBehaviour, IDamageable
 
         _health -= damageInfo.Value;
 
-        _uiHitEffect.Flash();
+        _uiHitEffect.Fade(0.4f);
 
         Debug.Log($"플레이어가 맞음");
         if (_health <= 0f)
