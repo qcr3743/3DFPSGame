@@ -58,7 +58,13 @@ public class Bomb : MonoBehaviour
         // 1. 드럼통들에게 데미지를 줌
         foreach (Collider col in colliders)
         {
-            col.GetComponent<IDamageable>()?.TakeDamage(_damage);
+            DamageInfo damageInfo = new()
+            {
+                Value = _damage,
+                HitPoint = col.ClosestPoint(transform.position),
+                HitNormal = (transform.position - col.ClosestPoint(transform.position)).normalized
+            };
+            col.GetComponent<IDamageable>()?.TakeDamage(damageInfo);
         }
     }
 }
