@@ -89,6 +89,8 @@ public class PlayerGunFire : MonoBehaviour
             {
                 drum.TakeDamage(_damage);
             }
+
+            hitInfo.collider.GetComponent<Box>()?.TakeDamage(_damage);
         }
 
         _bulletCount--;

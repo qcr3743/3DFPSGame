@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class Drum : MonoBehaviour
+public class Drum : MonoBehaviour, IDamageable
 {
     [SerializeField] private ParticleSystem _expolosionEffetPrefab;
 
