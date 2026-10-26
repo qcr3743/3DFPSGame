@@ -8,13 +8,32 @@ public class ZombieHealthBar : MonoBehaviour
 
     private void Awake()
     {
-        _zombie = GetComponent<Zombie>();
+        _zombie = GetComponentInParent<Zombie>();
+    }
+
+    private void Start()
+    {
+        if (_zombie != null)
+        {
+            _zombie.OnDamaged += OnZombieDamaged;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (_zombie != null)
+        {
+            _zombie.OnDamaged -= OnZombieDamaged;
+        }
+    }
+
+    private void OnZombieDamaged()
+    {
+        _slider.value = _zombie.Health / _zombie.MaxHealth;
     }
 
     private void LateUpdate()
     {
-        _slider.value = _zombie.Health / _zombie.MaxHealth;
-
         //빌보드가 체력바가 카메라를 쳐다보게한다
         _slider.transform.forward = Camera.main.transform.forward;
     }

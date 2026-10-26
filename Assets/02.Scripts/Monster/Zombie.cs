@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -36,6 +37,9 @@ public class Zombie : MonoBehaviour, IDamageable
     private CharacterController _controller;
     private Vector3 _startPosition;
     private GameObject _player;
+
+    public event Action OnDamaged;
+    public event Action OnDied;
 
     public float MaxHealth => _maxHealth;
     public float Health => _health;
@@ -85,6 +89,8 @@ public class Zombie : MonoBehaviour, IDamageable
 
         _health -= damageInfo.Value;
 
+        OnDamaged?.Invoke();
+
         StopAllCoroutines();
 
         if (_health > 0f)
@@ -103,6 +109,7 @@ public class Zombie : MonoBehaviour, IDamageable
             Debug.Log($"{_state} -> Death");
             _state = ZombieState.Death;
             StartCoroutine(Death_Coroutine());
+            OnDied?.Invoke();
         }
     }
 

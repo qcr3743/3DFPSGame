@@ -60,6 +60,7 @@ public class PlayerGunFire : MonoBehaviour
         _bulletCount = _maxBulletCount;
 
         Debug.Log("재장전 완료!");
+        _reloadCoroutine = null;
     }
 
     private void Shoot()
