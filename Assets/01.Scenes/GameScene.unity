@@ -202,8 +202,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 13217528}
-        m_TargetAssemblyTypeName: MinimapCamera, Assembly-CSharp
+      - m_Target: {fileID: 498674709}
+        m_TargetAssemblyTypeName: UI_Minimap, Assembly-CSharp
         m_MethodName: ZoomIn
         m_Mode: 1
         m_Arguments:
@@ -1645,6 +1645,7 @@ GameObject:
   - component: {fileID: 498674706}
   - component: {fileID: 498674708}
   - component: {fileID: 498674707}
+  - component: {fileID: 498674709}
   m_Layer: 5
   m_Name: UI_Minimap
   m_TagString: Untagged
@@ -1713,6 +1714,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 498674705}
   m_CullTransparentMesh: 1
+--- !u!114 &498674709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 498674705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b22116a5ba3e83b43b68f6e29f64b6b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UI_Minimap
+  _minimapCamera: {fileID: 13217526}
+  _zoomStep: 1
+  _minZoom: 3
+  _maxZoom: 15
 --- !u!1 &506122736
 GameObject:
   m_ObjectHideFlags: 0
@@ -2608,8 +2625,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 13217528}
-        m_TargetAssemblyTypeName: MinimapCamera, Assembly-CSharp
+      - m_Target: {fileID: 498674709}
+        m_TargetAssemblyTypeName: UI_Minimap, Assembly-CSharp
         m_MethodName: ZoomOut
         m_Mode: 1
         m_Arguments:

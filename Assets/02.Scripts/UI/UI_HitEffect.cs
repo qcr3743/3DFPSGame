@@ -18,6 +18,16 @@ public class UI_HitEffect : MonoBehaviour
     private void Start()
     {
         _image.enabled = false;
+        Player player = GameObject.FindAnyObjectByType<Player>();
+        if (player != null)
+        {
+            player.OnDamaged += OnPlayerDamaged;
+        }
+    }
+
+    private void OnPlayerDamaged()
+    {
+        Fade(0.6f);
     }
 
     public void Flash()
