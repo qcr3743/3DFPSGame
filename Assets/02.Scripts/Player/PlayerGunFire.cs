@@ -31,8 +31,9 @@ public class PlayerGunFire : MonoBehaviour
         // 0. 발사 타이머를 지난 시간만큼 줄인다
         _fireTimer -= Time.deltaTime;
 
+        bool isMouseVisible = Cursor.visible;
         // 1. 마우스 왼쪽 버튼 입력 받기
-        if (Input.GetButton("Fire1") && _fireTimer <= 0f && _bulletCount > 0)
+        if (!isMouseVisible && Input.GetButton("Fire1") && _fireTimer <= 0f && _bulletCount > 0)
         {
             _fireTimer = _fireInterval;
             Shoot();
