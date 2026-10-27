@@ -121,13 +121,17 @@ public class Zombie : MonoBehaviour, IDamageable
 
     private IEnumerator Hit_Coroutine()
     {
-        yield return new WaitForSeconds(0.3f);
+        StopAgent();
+        yield return new WaitForSeconds(0.3f); // 잠깐 멈칫함
+
         Debug.Log($"{_state} -> Trace");
         _state = ZombieState.Trace;
     }
 
     private IEnumerator Death_Coroutine()
     {
+        StopAgent();
+
         yield return new WaitForSeconds(0.5f);
         Destroy(gameObject);
     }
@@ -135,6 +139,8 @@ public class Zombie : MonoBehaviour, IDamageable
     private void Idle()
     {
         // Todo. Idle 애니메이션 실행
+
+        StopAgent();
 
         // 플레이어가 가까워지면 Trace 상태로 전이됨
         float distance = Vector3.Distance(transform.position, _player.transform.position);
@@ -166,12 +172,15 @@ public class Zombie : MonoBehaviour, IDamageable
             return;
         }
 
+        // SetDestination은 목적지 설정
+        // - 호출할 때마다 목적리를 향해 조금씩 이동 (X)
+        // - 한 번 세팅하면 내부에서 계속해서 이동 (O)
         _agent.SetDestination(_player.transform.position);
     }
 
     private void Comeback()
     {
-        if (Vector3.Distance(transform.position, _startPosition) < 1f)
+        if (Vector3.Distance(transform.position, _startPosition) < _agent.stoppingDistance)
         {
             Debug.Log($"{_state} -> Idle");
             _state = ZombieState.Idle;
@@ -183,6 +192,8 @@ public class Zombie : MonoBehaviour, IDamageable
 
     private void Attack()
     {
+        StopAgent();
+
         // 플레이어가 공격 사정 거리 밖으로 나가면 추격 개시
         float distance = Vector3.Distance(transform.position, _player.transform.position);
         if (distance > _attackRange)
@@ -208,5 +219,11 @@ public class Zombie : MonoBehaviour, IDamageable
             Debug.Log($"플레이어 공격");
             _attackTimer = 0f;
         }
+    }
+
+    private void StopAgent()
+    {
+        _agent.ResetPath(); // 에이전트의 목적지 삭제
+        _agent.velocity = Vector3.zero; // 미끄럼 방지를 위해 가속도 제로!
     }
 }
