@@ -1984,6 +1984,8 @@ MonoBehaviour:
   _minPower: 8
   _maxPower: 30
   _maxChargeTime: 2
+  _releaseDelay: 0.75
+  _throwDuration: 1.9
 --- !u!114 &506122746
 MonoBehaviour:
   m_ObjectHideFlags: 0

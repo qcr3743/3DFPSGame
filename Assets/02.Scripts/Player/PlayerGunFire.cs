@@ -38,14 +38,14 @@ public class PlayerGunFire : MonoBehaviour
         // 0. 발사 타이머를 지난 시간만큼 줄인다
         _fireTimer -= Time.deltaTime;
 
-        bool isMouseVisible = Cursor.visible;
+        bool canFire = !Cursor.visible && Input.GetButton("Fire1") && _bulletCount > 0;
+        _animator.SetBool("Fire", canFire);
         // 1. 마우스 왼쪽 버튼 입력 받기
-        if (!isMouseVisible && Input.GetButton("Fire1") && _fireTimer <= 0f && _bulletCount > 0)
+
+        if (canFire && _fireTimer <= 0f)
         {
             _fireTimer = _fireInterval;
             Shoot();
-
-            _animator.SetBool("Fire", true);
 
             if (_reloadCoroutine != null)
             {
@@ -53,10 +53,6 @@ public class PlayerGunFire : MonoBehaviour
                 Debug.Log("재장전 취소!");
                 _reloadCoroutine = null;
             }
-        }
-        else
-        {
-            _animator.SetBool("Fire", false);
         }
 
         if (Input.GetKeyDown(KeyCode.R) && _reloadCoroutine == null)
