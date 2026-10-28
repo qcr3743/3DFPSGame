@@ -45,10 +45,7 @@ public class PlayerGunFire : MonoBehaviour
             _fireTimer = _fireInterval;
             Shoot();
 
-            if (_animator.GetFloat("MoveMotion") == 0f) // 서 있을 때만 쏘는 동작
-            {
-                _animator.SetTrigger("Attack");
-            }
+            _animator.SetBool("Fire", true);
 
             if (_reloadCoroutine != null)
             {
@@ -56,6 +53,10 @@ public class PlayerGunFire : MonoBehaviour
                 Debug.Log("재장전 취소!");
                 _reloadCoroutine = null;
             }
+        }
+        else
+        {
+            _animator.SetBool("Fire", false);
         }
 
         if (Input.GetKeyDown(KeyCode.R) && _reloadCoroutine == null)
