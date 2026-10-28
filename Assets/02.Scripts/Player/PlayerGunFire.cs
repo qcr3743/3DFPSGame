@@ -16,6 +16,13 @@ public class PlayerGunFire : MonoBehaviour
     private int _bulletCount = 0;
     private Coroutine _reloadCoroutine;
 
+    private Animator _animator;
+
+    private void Awake()
+    {
+        _animator = GetComponentInChildren<Animator>();
+    }
+
     private void Start()
     {
         _bulletCount = _maxBulletCount;
@@ -37,6 +44,11 @@ public class PlayerGunFire : MonoBehaviour
         {
             _fireTimer = _fireInterval;
             Shoot();
+
+            if (_animator.GetFloat("MoveMotion") == 0f) // 서 있을 때만 쏘는 동작
+            {
+                _animator.SetTrigger("Attack");
+            }
 
             if (_reloadCoroutine != null)
             {

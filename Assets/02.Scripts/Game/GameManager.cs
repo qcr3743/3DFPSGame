@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     public GameState State => _state;
 
     [SerializeField] private TextMeshProUGUI _stateText;
+    [SerializeField] private Animator _playerAnimator;
 
     private void Awake()
     {
@@ -53,5 +54,7 @@ public class GameManager : MonoBehaviour
         _stateText.gameObject.SetActive(true);
         _stateText.text = "게임오버";
         _stateText.color = Color.red;
+
+        _playerAnimator.SetFloat("MoveMotion", 0f);
     }
 }

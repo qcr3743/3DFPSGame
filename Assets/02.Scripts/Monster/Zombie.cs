@@ -59,6 +59,11 @@ public class Zombie : MonoBehaviour, IDamageable
         _startPosition = transform.position;
         _player = GameObject.FindWithTag("Player");
         _animator = GetComponentInChildren<Animator>();
+
+        // 이동은 NavMeshAgent가 담당하므로 애니메이션의 루트 모션은 끈다
+        // - 켜져 있으면 클립이 자식 모델을 부모(에이전트)에서 조금씩 밀어내고,
+        //   부모가 회전할 때 밀려난 모델이 원을 그리며 돈다
+        _animator.applyRootMotion = false;
     }
 
     private void Update()
@@ -124,7 +129,18 @@ public class Zombie : MonoBehaviour, IDamageable
     private IEnumerator Hit_Coroutine()
     {
         StopAgent();
-        yield return new WaitForSeconds(0.3f); // 잠깐 멈칫함
+
+        // 맞은 순간 바로 Hit 애니메이션 재생 (기다린 뒤에 호출하면 그만큼 늦게 나옴)
+        // - 남아있는 트리거를 지워서 엉뚱한 전이가 나중에 터지지 않게 함
+        _animator.ResetTrigger("StartAttack");
+        _animator.ResetTrigger("AttackMove");
+        _animator.ResetTrigger("MoveToAttackDelay");
+        _animator.SetTrigger("Hit");
+
+        yield return new WaitForSeconds(0.5f); // 잠깐 멈칫함
+
+        // 멈칫이 끝나면 추격 상태에 맞게 Move 애니메이션으로
+        _animator.CrossFadeInFixedTime("Move", 0.15f);
 
         Debug.Log($"{_state} -> Trace");
         _state = ZombieState.Trace;

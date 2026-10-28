@@ -20,6 +20,7 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] private float _jumpCost = 20f;
 
     private CharacterController _characterController;
+    private Animator _animator;
 
     public float Stamina => _stamina;
 
@@ -28,6 +29,7 @@ public class PlayerMove : MonoBehaviour
     {
         _characterController = GetComponent<CharacterController>();
         _stamina = MaxStamina;
+        _animator = GetComponentInChildren<Animator>();
     }
 
     private void Update()
@@ -47,6 +49,7 @@ public class PlayerMove : MonoBehaviour
         // 2. 키보드 입력에 따라 방향을 구한다
         Vector3 direction = new Vector3(h, 0, v);
         direction.Normalize(); //대각선이어도 방향의 길이를 1로 고정하기 위해서
+        _animator.SetFloat("MoveMotion", direction.magnitude);
         direction = transform.TransformDirection(direction);
         // 캐릭터의 회전 방향을 기준으로 로컬 방향 벡터를 월드 방향 벡터로 변환
         // 로컬 좌표계: 한 대상을 중심
