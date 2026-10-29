@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -18,6 +19,8 @@ public class PlayerGunFire : MonoBehaviour
 
     private Animator _animator;
 
+    public event Action<int, int> OnBulletCountChanged;
+
     private void Awake()
     {
         _animator = GetComponentInChildren<Animator>();
@@ -26,6 +29,7 @@ public class PlayerGunFire : MonoBehaviour
     private void Start()
     {
         _bulletCount = _maxBulletCount;
+        OnBulletCountChanged?.Invoke(_bulletCount, _maxBulletCount);
     }
 
     private void Update()
@@ -67,6 +71,7 @@ public class PlayerGunFire : MonoBehaviour
 
         yield return new WaitForSeconds(_reloadingTime);
         _bulletCount = _maxBulletCount;
+        OnBulletCountChanged?.Invoke(_bulletCount, _maxBulletCount);
 
         Debug.Log("재장전 완료!");
         _reloadCoroutine = null;
@@ -120,5 +125,6 @@ public class PlayerGunFire : MonoBehaviour
         }
 
         _bulletCount--;
+        OnBulletCountChanged?.Invoke(_bulletCount, _maxBulletCount);
     }
 }

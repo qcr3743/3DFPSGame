@@ -23,8 +23,7 @@ public class PlayerZoom : MonoBehaviour
             return;
         }
 
-        bool isZooming = _player.WeaponMode == WeaponMode.Sniper
-                         && Input.GetMouseButton(1);
+        bool isZooming = _player.WeaponMode == WeaponMode.Sniper && Input.GetMouseButton(1);
 
         _sniperZoom.SetActive(isZooming);
         _crosshair.SetActive(!isZooming);

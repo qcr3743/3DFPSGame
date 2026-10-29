@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -25,10 +26,17 @@ public class PlayerBombFire : MonoBehaviour
     private Player _player;
     private Animator _animator;
 
+    public event Action<int> OnFired;
+
     private void Awake()
     {
         _player = GetComponent<Player>();
         _animator = GetComponentInChildren<Animator>();
+    }
+
+    private void Start()
+    {
+        OnFired?.Invoke(_bombCount);
     }
 
     private void Update()
@@ -100,5 +108,6 @@ public class PlayerBombFire : MonoBehaviour
         Rigidbody rigidbody = bomb.GetComponent<Rigidbody>();
         rigidbody.AddForce(Camera.main.transform.forward * _throwPower, ForceMode.Impulse);
         _bombCount--;
+        OnFired?.Invoke(_bombCount);
     }
 }
