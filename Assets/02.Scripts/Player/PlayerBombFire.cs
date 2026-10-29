@@ -13,26 +13,32 @@ public class PlayerBombFire : MonoBehaviour
     [SerializeField] private float _maxChargeTime = 2f;
 
     [Header("던지기 애니메이션 타이밍")]
-    [Tooltip("Throw 애니메이션 시작 후 손에서 폭탄이 떠나는 시간(초). 놓는 프레임 / 30")]
     [SerializeField] private float _releaseDelay = 0.8f;
-    [Tooltip("한 번 던진 뒤 다음 던지기까지 막는 시간(초). Throw 클립 길이 정도")]
+
     [SerializeField] private float _throwDuration = 1.9f;
 
     private float _throwPower;
     private float _chargeTime;
-    private bool _isCharging;   // GetButtonDown을 정상적으로 받은 뒤에만 true
-    private bool _isThrowing;   // 던지는 애니메이션이 진행 중이면 true
+    private bool _isCharging; // GetButtonDown을 정상적으로 받은 뒤에만 true
+    private bool _isThrowing; // 던지는 애니메이션이 진행 중이면 true
 
+    private Player _player;
     private Animator _animator;
 
     private void Awake()
     {
+        _player = GetComponent<Player>();
         _animator = GetComponentInChildren<Animator>();
     }
 
     private void Update()
     {
         if (GameManager.Instance.State != GameState.Playing)
+        {
+            return;
+        }
+
+        if (_player.WeaponMode != WeaponMode.Normal)
         {
             return;
         }
