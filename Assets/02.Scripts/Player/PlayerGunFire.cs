@@ -16,9 +16,15 @@ public class PlayerGunFire : MonoBehaviour
     [SerializeField] private GameObject[] _muzzleFlashes;
     [SerializeField] private float _flashTime = 0.05f;
 
+    // 총알 궤적: 총구에서 맞은 지점까지 잠깐 선을 그린다
+    [SerializeField] private Transform _firePoint;        // 선이 시작되는 총구 위치
+    [SerializeField] private LineRenderer _bulletTrail;   // 궤적을 그릴 LineRenderer
+    [SerializeField] private float _trailTime = 0.03f;    // 선이 보이는 시간
+
     private float _fireTimer = 0f;
     private int _bulletCount = 0;
     private Coroutine _reloadCoroutine;
+    private Coroutine _trailCoroutine; // 실행 중인 궤적 코루틴 (연사 시 이전 것을 멈추기 위해 저장)
 
     private Animator _animator;
 
@@ -96,6 +102,11 @@ public class PlayerGunFire : MonoBehaviour
 
         // 4. 레이를 발사하고, 만일 부딪힌 물체가 있다면 이펙트 표시하기
         bool isHit = Physics.Raycast(ray, out hitInfo, _range);
+
+        // 총알 궤적 표시: 맞았으면 맞은 곳까지, 안 맞았으면 사거리 끝까지
+        Vector3 endPoint = isHit ? hitInfo.point : ray.GetPoint(_range);
+        ShowBulletTrail(endPoint);
+
         if (isHit)
         {
             // Debug.Log($"{hitInfo.collider.name}이 총알을 맞았다. 데미지: {_damage}");
@@ -141,5 +152,29 @@ public class PlayerGunFire : MonoBehaviour
         yield return new WaitForSeconds(_flashTime);
 
         flash.SetActive(false);
+    }
+
+    // 총알 궤적 표시 시작
+    private void ShowBulletTrail(Vector3 endPoint)
+    {
+        // 연사 중에 이전 코루틴이 새로 그린 선을 꺼 버리지 않도록 멈춘다
+        if (_trailCoroutine != null)
+        {
+            StopCoroutine(_trailCoroutine);
+        }
+        _trailCoroutine = StartCoroutine(BulletTrail_Coroutine(endPoint));
+    }
+
+    // 총구 → 끝점으로 선을 그리고, 잠시 뒤 끈다
+    private IEnumerator BulletTrail_Coroutine(Vector3 endPoint)
+    {
+        _bulletTrail.SetPosition(0, _firePoint.position); // 시작점: 총구
+        _bulletTrail.SetPosition(1, endPoint);            // 끝점: 맞은 곳
+        _bulletTrail.enabled = true;
+
+        yield return new WaitForSeconds(_trailTime);
+
+        _bulletTrail.enabled = false;
+        _trailCoroutine = null;
     }
 }
