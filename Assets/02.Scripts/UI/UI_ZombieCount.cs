@@ -14,6 +14,6 @@ public class UI_ZombieCount : MonoBehaviour
 
     private void RefreshZombieCount(int maxCount, int count)
     {
-        _text.text = $"남은 좀비: {count}마리 / 최대 좀비: {maxCount}마리";
+        _text.text = $"남은 좀비: {count} / 최대 좀비: {maxCount}";
     }
 }

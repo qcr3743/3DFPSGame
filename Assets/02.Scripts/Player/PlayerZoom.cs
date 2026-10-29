@@ -5,8 +5,9 @@ using UnityEngine;
 public class PlayerZoom : MonoBehaviour
 {
     [SerializeField] private GameObject _crosshair;
-    [SerializeField] private float _normalFov = 60f;
-    [SerializeField] private float _zoomFov = 15f;
+    [SerializeField] private GameObject _sniperZoom;
+    [SerializeField] private float _normalPov = 60f;
+    [SerializeField] private float _sinperPov = 15f;
 
     private Player _player;
 
@@ -25,7 +26,8 @@ public class PlayerZoom : MonoBehaviour
         bool isZooming = _player.WeaponMode == WeaponMode.Sniper
                          && Input.GetMouseButton(1);
 
-        Camera.main.fieldOfView = isZooming ? _zoomFov : _normalFov;
+        _sniperZoom.SetActive(isZooming);
         _crosshair.SetActive(!isZooming);
+        Camera.main.fieldOfView = isZooming ? _sinperPov : _normalPov;
     }
 }
