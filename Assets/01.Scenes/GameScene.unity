@@ -3945,7 +3945,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &895202570
 Transform:
   m_ObjectHideFlags: 0
@@ -5627,6 +5627,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 951e48b9a955e31449614bc99051927c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMeleeAttack
+  _hitMode: 1
+  _fanDamage: 25
+  _range: 2
+  _angle: 90
+  _targetMask:
+    serializedVersion: 2
+    m_Bits: 768
+  _obstacleMask:
+    serializedVersion: 2
+    m_Bits: 1
   _katana: {fileID: 930661669}
   _katanaCollider: {fileID: 895202572}
 --- !u!1 &1744136664
