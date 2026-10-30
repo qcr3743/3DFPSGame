@@ -45,6 +45,10 @@ public class Player : MonoBehaviour, IDamageable
         {
             ChangeMode(WeaponMode.Sniper);
         }
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            ChangeMode(WeaponMode.Melee);
+        }
     }
 
     private void ChangeMode(WeaponMode mode)
@@ -65,6 +69,10 @@ public class Player : MonoBehaviour, IDamageable
             case WeaponMode.Sniper:
                 _modeText.text = "저격 모드";
                 break;
+            case WeaponMode.Melee:
+                _modeText.text = "근접 모드";
+                break;
+
         }
     }
 

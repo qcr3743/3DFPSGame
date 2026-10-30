@@ -1,5 +1,6 @@
 public enum WeaponMode
 {
     Normal, // 일반 모드: 폭탄을 던짐
-    Sniper // 저격 모드: 조준점 확대
+    Sniper, // 저격 모드: 조준점 확대
+    Melee
 }
