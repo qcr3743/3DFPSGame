@@ -9,6 +9,12 @@ public static partial class LoginSceneBuilder
     private const float HudFontSize = 13f;
     private const float HudCharacterSpacing = 12f;
 
+    // TargetBracket (HOSTILE 표시를 눈에 띄게: 글자 1.5배, 모서리 선 30px / 두께 3px)
+    private const float BracketCornerLength = 30f;
+    private const float BracketCornerThickness = 3f;
+    private const float BracketTagFontSize = 18f;
+    private const float BracketTagHeight = 30f;
+
     // ───── 배경 ─────
     private static void BuildBackground(Transform parent)
     {
@@ -87,54 +93,68 @@ public static partial class LoginSceneBuilder
     }
 
     // ───── TargetBracket (x 1290, y 520, 360x120) ─────
-    // 배경 이미지의 좀비 무리 위치에 맞춘 조준 표시. 네 모서리 L자 + 위쪽 태그.
+    // 배경 이미지의 좀비 무리 위치에 맞춘 조준 표시. 네 모서리 L자 + 위쪽 태그 + UI_TargetBracketFeel.
     private static void BuildTargetBracket(Transform parent)
     {
         RectTransform bracket = CreateRect("TargetBracket", parent);
         SetTopLeft(bracket, 1290f, 520f, 360f, 120f);
 
-        CreateBracketCorner(bracket, "Corner_TL", new Vector2(0f, 1f));
-        CreateBracketCorner(bracket, "Corner_TR", new Vector2(1f, 1f));
-        CreateBracketCorner(bracket, "Corner_BL", new Vector2(0f, 0f));
-        CreateBracketCorner(bracket, "Corner_BR", new Vector2(1f, 0f));
+        Vector2[] cornerAnchors =
+        {
+            new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, 0f), new Vector2(1f, 0f),
+        };
+        string[] cornerNames = { "Corner_TL", "Corner_TR", "Corner_BL", "Corner_BR" };
 
-        // 태그: 위쪽 -30 (태그 윗변이 브래킷 위 30px, 높이 22)
+        var corners = new Object[cornerAnchors.Length];
+        var cornerBars = new Object[cornerAnchors.Length * 2];
+        for (int i = 0; i < cornerAnchors.Length; i++)
+        {
+            corners[i] = CreateBracketCorner(bracket, cornerNames[i], cornerAnchors[i],
+                out cornerBars[i * 2], out cornerBars[i * 2 + 1]);
+        }
+
+        // 태그: 윗변이 브래킷 위 TagHeight + 8px (글자 1.5배에 맞춰 높이 30)
         RectTransform tagRow = CreateRect("Tag", bracket);
         tagRow.anchorMin = new Vector2(0f, 1f);
         tagRow.anchorMax = new Vector2(0f, 1f);
         tagRow.pivot = new Vector2(0f, 0f);
-        tagRow.sizeDelta = new Vector2(360f, 22f);
+        tagRow.sizeDelta = new Vector2(360f, BracketTagHeight);
         tagRow.anchoredPosition = new Vector2(0f, 8f);
-        AddHorizontal(tagRow.gameObject, TextAnchor.MiddleLeft, 10f, true);
+        AddHorizontal(tagRow.gameObject, TextAnchor.MiddleLeft, 12f, true);
 
         Image hostile = CreateImage("Tag_Hostile", tagRow, null, Accent, false);
         HorizontalLayoutGroup hostileLayout = AddHorizontal(hostile.gameObject, TextAnchor.MiddleCenter, 0f, true);
-        hostileLayout.padding = new RectOffset(8, 8, 0, 0);
-        CreateText("Text", hostile.transform, "HOSTILE ×3", _fontMono, 12f, AccentText,
-            TextAlignmentOptions.Center, FontStyles.Normal, 2f);
+        hostileLayout.padding = new RectOffset(10, 10, 0, 0);
+        TextMeshProUGUI hostileText = CreateText("Text", hostile.transform, "HOSTILE ×3", _fontMono, BracketTagFontSize,
+            AccentText, TextAlignmentOptions.Center, FontStyles.Normal, 2f);
 
-        CreateText("Text_Distance", tagRow, "DIST 240m", _fontMono, 12f, Accent,
+        CreateText("Text_Distance", tagRow, "DIST 240m", _fontMono, BracketTagFontSize, Accent,
             TextAlignmentOptions.Left, FontStyles.Normal, 2f);
+
+        // 모서리 숨쉬기 / 명중 반응 / HOSTILE 카운트
+        var feel = bracket.gameObject.AddComponent<UI_TargetBracketFeel>();
+        SetFieldArray(feel, "_corners", corners);
+        SetFieldArray(feel, "_cornerGraphics", cornerBars);
+        SetField(feel, "_hostileText", hostileText);
     }
 
-    // corner(0/1, 0/1) 위치에 22px L자 선 (두께 2)
-    private static void CreateBracketCorner(Transform parent, string name, Vector2 corner)
+    // corner(0/1, 0/1) 위치에 L자 선. 모서리 루트(숨쉬기로 움직일 대상)를 돌려준다.
+    private static RectTransform CreateBracketCorner(Transform parent, string name, Vector2 corner,
+                                                     out Object horizontalBar, out Object verticalBar)
     {
-        const float length = 22f;
-        const float thickness = 2f;
-
         RectTransform root = CreateRect(name, parent);
         root.anchorMin = corner;
         root.anchorMax = corner;
         root.pivot = corner;
         root.anchoredPosition = Vector2.zero;
-        root.sizeDelta = new Vector2(length, length);
+        root.sizeDelta = new Vector2(BracketCornerLength, BracketCornerLength);
 
-        CreateCornerBar(root, "Horizontal", corner, new Vector2(length, thickness));
-        CreateCornerBar(root, "Vertical", corner, new Vector2(thickness, length));
+        horizontalBar = CreateCornerBar(root, "Horizontal", corner, new Vector2(BracketCornerLength, BracketCornerThickness));
+        verticalBar = CreateCornerBar(root, "Vertical", corner, new Vector2(BracketCornerThickness, BracketCornerLength));
+        return root;
     }
 
-    private static void CreateCornerBar(Transform parent, string name, Vector2 corner, Vector2 size)
+    private static Image CreateCornerBar(Transform parent, string name, Vector2 corner, Vector2 size)
     {
         Image bar = CreateImage(name, parent, null, Accent, false);
         RectTransform rect = bar.rectTransform;
@@ -143,6 +163,7 @@ public static partial class LoginSceneBuilder
         rect.pivot = corner;
         rect.anchoredPosition = Vector2.zero;
         rect.sizeDelta = size;
+        return bar;
     }
 
     // ───── HUD_Bottom (왼쪽 120 / 오른쪽 120 / 아래 44) ─────

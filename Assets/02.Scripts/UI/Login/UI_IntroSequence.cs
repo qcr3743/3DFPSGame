@@ -27,6 +27,9 @@ public class UI_IntroSequence : MonoBehaviour
     private Coroutine _introCoroutine;
     private bool _isPlaying;
 
+    // 인트로가 재생 중인지 (UI_ShootCatcher가 사격을 막는 데 쓴다)
+    public bool IsPlaying => _isPlaying;
+
     private void Awake()
     {
         _loginPanelRect = _loginPanel.transform as RectTransform;

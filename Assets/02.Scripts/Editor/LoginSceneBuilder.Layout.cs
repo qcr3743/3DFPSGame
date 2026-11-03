@@ -58,6 +58,9 @@ public static partial class LoginSceneBuilder
         SetFieldArray(intro, "_hudLines", new Object[] { hudTopLine });
         SetField(intro, "_loginPanel", loginPanel);
 
+        // 배경 클릭 사격 연출 (ShootCatcher는 BG 바로 위, ShootFX는 FX_Overlay 바로 앞에 끼워 넣는다)
+        BuildShooting(canvasRect, intro);
+
         // 링크 버튼 OnClick만 패널 전환에 연결한다. (로그인/가입/중복 확인/게임 종료 버튼은 비워 둠)
         UnityEventTools.AddPersistentListener(linkSignup.onClick, switcher.ShowSignup);
         UnityEventTools.AddPersistentListener(linkLogin.onClick, switcher.ShowLogin);
