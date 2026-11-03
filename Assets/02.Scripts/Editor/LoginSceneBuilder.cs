@@ -48,10 +48,13 @@ public static partial class LoginSceneBuilder
     private static readonly Color Error = Hex("#FF6A4D");          // 오류 테두리 (내일 연결)
     private static readonly Color ErrorText = Hex("#FF8A70");
     private static readonly Color Line = new Color(1f, 1f, 1f, 0.14f);
-    private static readonly Color FieldBg = new Color(1f, 1f, 1f, 0.04f);
-    private static readonly Color FieldBorder = new Color(1f, 1f, 1f, 0.18f);
+    // 시안 값은 0.04지만 프로젝트가 Linear 색 공간이라 그대로 쓰면 밝은 회색이 된다.
+    // #070908 위에서 시안(sRGB 블렌딩)과 같은 밝기가 나오도록 환산한 값.
+    private static readonly Color FieldBg = new Color(1f, 1f, 1f, 0.004f);
+    private static readonly Color FieldBorder = new Color(1f, 1f, 1f, 0.22f);
     private static readonly Color FieldBorderHover = new Color(1f, 1f, 1f, 0.32f);
-    private static readonly Color BgImageTint = Hex("#E6E6E6");    // 배경 이미지를 아주 살짝 어둡게
+    private static readonly Color BgImageTint = Hex("#DADADA");    // 배경 이미지 밝기 조절 (UI 녹색이 탁해지지 않게 Volume 대신 여기서)
+    private const float ScanlineOpacity = 0.7f;                    // 스캔라인 텍스처(alpha 0.03)에 곱하는 비율
 
     // 빌드 중에만 쓰는 공유 값 (Build 시작 시 채운다)
     private static TMP_FontAsset _fontTitle;
@@ -213,17 +216,17 @@ public static partial class LoginSceneBuilder
         }
 
         ColorAdjustments colorAdjustments = GetOrAddEffect<ColorAdjustments>(profile);
-        // 배경 이미지가 들어가서 약하게 조정 (Saturation -20, Post Exposure -0.2)
-        colorAdjustments.saturation.Override(-20f);
+        // 채도/노출은 건드리지 않는다 (UI 녹색이 탁해지지 않게). 배경 밝기는 BG_Image 색으로 조절.
+        colorAdjustments.saturation.Override(0f);
         colorAdjustments.contrast.Override(12f);
-        colorAdjustments.postExposure.Override(-0.2f);
+        colorAdjustments.postExposure.Override(0f);
 
         Bloom bloom = GetOrAddEffect<Bloom>(profile);
         bloom.threshold.Override(0.9f);
         bloom.intensity.Override(0.6f);
 
         Vignette vignette = GetOrAddEffect<Vignette>(profile);
-        vignette.intensity.Override(0.35f);
+        vignette.intensity.Override(0.28f);
         vignette.smoothness.Override(0.4f);
 
         FilmGrain filmGrain = GetOrAddEffect<FilmGrain>(profile);
@@ -337,6 +340,20 @@ public static partial class LoginSceneBuilder
         {
             property.GetArrayElementAtIndex(i).objectReferenceValue = values[i];
         }
+        serialized.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    private static void SetColorField(Object target, string fieldName, Color value)
+    {
+        var serialized = new SerializedObject(target);
+        SerializedProperty property = serialized.FindProperty(fieldName);
+        if (property == null || property.propertyType != SerializedPropertyType.Color)
+        {
+            Debug.LogError($"[LoginSceneBuilder] {target.GetType().Name}.{fieldName} 색 필드를 찾을 수 없습니다.");
+            return;
+        }
+
+        property.colorValue = value;
         serialized.ApplyModifiedPropertiesWithoutUndo();
     }
 

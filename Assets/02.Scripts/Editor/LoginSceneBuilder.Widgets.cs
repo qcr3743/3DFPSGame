@@ -86,6 +86,13 @@ public static partial class LoginSceneBuilder
         SetField(feel, "_background", background);
         SetField(feel, "_audioSource", _uiAudio);
 
+        // 색은 빌더의 디자인 토큰을 그대로 넣는다 (스크립트 기본값과 어긋나지 않게).
+        SetColorField(feel, "_borderNormal", FieldBorder);
+        SetColorField(feel, "_borderHover", FieldBorderHover);
+        SetColorField(feel, "_borderFocus", Accent);
+        SetColorField(feel, "_backgroundNormal", FieldBg);
+        SetColorField(feel, "_backgroundFocus", WithAlpha(Accent, 0.06f));
+
         return input;
     }
 

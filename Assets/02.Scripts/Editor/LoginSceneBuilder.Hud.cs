@@ -21,13 +21,17 @@ public static partial class LoginSceneBuilder
         bgImage.enabled = _spriteBackground != null;
         bgImage.gameObject.AddComponent<UI_BackgroundDrift>();
 
+        // 배경 생동감 연출 (BG_Image 자식 → 확대와 같이 움직이고 BG_LeftShade 아래에 그려짐)
+        BuildAmbience(bgImage.rectTransform, bg);
+
         Image leftShade = CreateImage("BG_LeftShade", bg, _spriteLeftShade, Color.white, false);
         Stretch(leftShade.rectTransform);
 
         Image vignette = CreateImage("BG_Vignette", bg, _spriteVignette, Color.white, false);
         Stretch(vignette.rectTransform);
 
-        Image scanline = CreateImage("BG_Scanline", bg, _spriteScanline, Color.white, false);
+        // 텍스처는 그대로 두고 Image alpha로 농도를 조절한다 (이미 만든 PNG를 재사용하기 때문).
+        Image scanline = CreateImage("BG_Scanline", bg, _spriteScanline, new Color(1f, 1f, 1f, ScanlineOpacity), false);
         scanline.type = Image.Type.Tiled;
         Stretch(scanline.rectTransform);
     }

@@ -57,6 +57,9 @@ public static partial class LoginSceneBuilder
         // 폰트에 ⚠(U+26A0) 글리프가 없어서 경고 아이콘을 sprite로 만든다.
         _spriteWarning = GetOrCreateSprite("Login_Warning.png", 32, 32, WarningPixel,
             Vector4.zero, TextureWrapMode.Clamp, FilterMode.Bilinear);
+
+        // 배경 연출용 (glow, 빛줄기, 안개) — LoginSceneBuilder.Ambience.cs
+        CreateAmbienceSprites();
     }
 
     private static Sprite GetOrCreateSprite(string fileName, int width, int height, PixelFunc pixel,

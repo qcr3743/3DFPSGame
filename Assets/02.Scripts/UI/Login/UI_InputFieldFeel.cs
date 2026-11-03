@@ -13,12 +13,12 @@ public class UI_InputFieldFeel : MonoBehaviour, IPointerEnterHandler, IPointerEx
     [SerializeField] private Image _background;
 
     [Header("테두리 색")]
-    [SerializeField] private Color _borderNormal = new Color(1f, 1f, 1f, 0.18f);
+    [SerializeField] private Color _borderNormal = new Color(1f, 1f, 1f, 0.22f);
     [SerializeField] private Color _borderHover = new Color(1f, 1f, 1f, 0.32f);
     [SerializeField] private Color _borderFocus = new Color(0.62f, 0.9f, 0.18f, 1f);      // Accent #9EE62E
 
     [Header("바탕 색")]
-    [SerializeField] private Color _backgroundNormal = new Color(1f, 1f, 1f, 0.04f);
+    [SerializeField] private Color _backgroundNormal = new Color(1f, 1f, 1f, 0.004f);  // Linear 색 공간 환산값 (시안 0.04)
     [SerializeField] private Color _backgroundFocus = new Color(0.62f, 0.9f, 0.18f, 0.06f); // Accent alpha 0.06
 
     [Header("연출")]
