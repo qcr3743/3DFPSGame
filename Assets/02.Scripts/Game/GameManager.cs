@@ -1,6 +1,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public enum GameState
 {
@@ -30,9 +31,6 @@ public class GameManager : SingletonBehaviour<GameManager>
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            Debug.Log($"유니티 흐른 시간: {Time.deltaTime}");
-            Debug.Log($"실제 흐른 시간: {Time.unscaledDeltaTime}");
-
             if (_state == GameState.Playing)
             {
                 _state = GameState.Pause;
@@ -70,5 +68,31 @@ public class GameManager : SingletonBehaviour<GameManager>
         _stateText.color = Color.red;
 
         _playerAnimator.SetFloat("MoveMotion", 0f);
+    }
+
+    // 계속하기
+    public void Resume()
+    {
+        _state = GameState.Playing;
+        Time.timeScale = 1f;
+        _optionPopup.SetActive(false);
+        CursorManager.Instance.LockCursor();
+    }
+
+    // 다시하기
+    public void Restart()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    // 게임 종료
+    public void Quit()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
     }
 }
