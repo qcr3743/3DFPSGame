@@ -4,25 +4,25 @@ using UnityEngine;
 // 애니메이션 이벤트를 받아야 하므로 Animator가 붙은 Model에 붙임
 public class PlayerMeleeAttack : MonoBehaviour
 {
-    [SerializeField] private MeleeHitMode _hitMode = MeleeHitMode.Collider;  // 맞힐 대상을 고르는 방법
-    [SerializeField] private float _fanDamage = 25f;                         // 부채꼴 방법의 대미지
-    [SerializeField] private float _range = 2f;                              // 부채꼴의 반지름 (m)
-    [SerializeField, Range(0f, 360f)] private float _angle = 90f;            // 부채꼴 각도 (도)
-    [SerializeField] private LayerMask _targetMask;                          // 때릴 대상 (Drum, Zombie)
-    [SerializeField] private LayerMask _obstacleMask;                        // 가로막는 것 (Default)
-    
+    [SerializeField] private MeleeHitMode _hitMode = MeleeHitMode.Collider; // 맞힐 대상을 고르는 방법
+    [SerializeField] private float _fanDamage = 25f; // 부채꼴 방법의 대미지
+    [SerializeField] private float _range = 2f; // 부채꼴의 반지름 (m)
+    [SerializeField, Range(0f, 360f)] private float _angle = 90f; // 부채꼴 각도 (도)
+    [SerializeField] private LayerMask _targetMask; // 때릴 대상 (Drum, Zombie)
+    [SerializeField] private LayerMask _obstacleMask; // 가로막는 것 (Default)
+
     [SerializeField] private GameObject _katana;
     [SerializeField] private Collider _katanaCollider;
-    
+
     private Player _player;
     private Animator _animator;
 
     private void Awake()
     {
-        _player = GetComponentInParent<Player>();        // 부모의 Player
-        _animator = GetComponentInChildren<Animator>();  // Goku 자신의 Animator
+        _player = GetComponentInParent<Player>(); // 부모의 Player
+        _animator = GetComponentInChildren<Animator>(); // Goku 자신의 Animator
     }
-    
+
     private void OnEnable()
     {
         // 구독: 무기 모드가 바뀌면 불러 달라고 등록한다.
@@ -34,12 +34,12 @@ public class PlayerMeleeAttack : MonoBehaviour
         // 구독 취소
         _player.OnWeaponModeChanged -= RefreshKatana;
     }
-    
+
     private void Start()
     {
-        RefreshKatana(_player.WeaponMode);  // 처음 모드에 맞춰 카타나를 보이거나 숨긴다.
+        RefreshKatana(_player.WeaponMode); // 처음 모드에 맞춰 카타나를 보이거나 숨긴다.
     }
-    
+
     private void RefreshKatana(WeaponMode mode)
     {
         _katana.SetActive(mode == WeaponMode.Melee);
@@ -51,6 +51,7 @@ public class PlayerMeleeAttack : MonoBehaviour
         {
             return;
         }
+
         if (_player.WeaponMode != WeaponMode.Melee)
         {
             return; // 근접 모드에서만 휘두른다.
@@ -61,7 +62,7 @@ public class PlayerMeleeAttack : MonoBehaviour
             _animator.SetTrigger("Slash");
         }
     }
-    
+
     // 앞쪽 부채꼴 안의 대상을 한 번에 때린다. slash8의 FanAttack 이벤트가 불러 준다.
     public void FanAttack()
     {
@@ -107,7 +108,7 @@ public class PlayerMeleeAttack : MonoBehaviour
             }
         }
     }
-    
+
     // 칼날을 켠다. slash8의 ActivateCollider 이벤트가 불러 준다.
     public void ActivateCollider()
     {
@@ -116,7 +117,7 @@ public class PlayerMeleeAttack : MonoBehaviour
         {
             return;
         }
-        
+
         Debug.Log("카타나 콜라이더 활성화");
         _katanaCollider.enabled = true;
     }
@@ -127,8 +128,7 @@ public class PlayerMeleeAttack : MonoBehaviour
         Debug.Log("카타나 콜라이더 비활성화");
         _katanaCollider.enabled = false;
     }
-    
-    // Goku를 고르면 Scene 창에 부채꼴 방법의 공격 범위를 그린다.
+
     private void OnDrawGizmosSelected()
     {
         // 플레이하지 않을 때도 불리므로, Awake에서 찾는 _player 대신 여기서 찾는다.

@@ -20,7 +20,14 @@ public static class MapOptimizationTools
     private const string RunInBgSetKey = "MapOpt.RunInBackgroundSet";
     private const string Menu = "Tools/Map Optimization/";
 
-    public enum Category { Ground, SmallProp, Container, MeshLodSet, Large }
+    public enum Category
+    {
+        Ground,
+        SmallProp,
+        Container,
+        MeshLodSet,
+        Large
+    }
 
     static MapOptimizationTools()
     {
@@ -34,10 +41,12 @@ public static class MapOptimizationTools
     private static void PollCommandFile()
     {
         if (EditorApplication.timeSinceStartup < _nextPoll || EditorApplication.isPlayingOrWillChangePlaymode
-            || EditorApplication.isCompiling || EditorApplication.isUpdating)
+                                                           || EditorApplication.isCompiling ||
+                                                           EditorApplication.isUpdating)
         {
             return;
         }
+
         _nextPoll = EditorApplication.timeSinceStartup + 2.0;
 
         string path = Path.Combine(CullingBenchmarkRunner.ReportDir, "command.txt");
@@ -45,6 +54,7 @@ public static class MapOptimizationTools
         {
             return;
         }
+
         string command;
         try
         {
@@ -65,8 +75,14 @@ public static class MapOptimizationTools
                 case "resume": ResumeFrom(int.Parse(parts[1])); break;
                 case "bench": StartBench(parts[1]); break;
                 case "meshlod": SetMeshLodImport(parts[1] == "on"); break;
-                case "batching": SetBatchingStatic(Category.MeshLodSet, parts[1] == "on"); SaveScene(); break;
-                case "bake": BakeOcclusion(); SaveScene(); break;
+                case "batching":
+                    SetBatchingStatic(Category.MeshLodSet, parts[1] == "on");
+                    SaveScene();
+                    break;
+                case "bake":
+                    BakeOcclusion();
+                    SaveScene();
+                    break;
                 case "dump": DumpClassification(); break;
                 case "stop": StopPipeline(); break;
                 default: Log("알 수 없는 명령"); break;
@@ -89,6 +105,7 @@ public static class MapOptimizationTools
         {
             return;
         }
+
         Log("===== 전체 파이프라인 시작 =====");
         SessionState.SetInt(StepKey, 0);
         RunStep(0);
@@ -107,6 +124,7 @@ public static class MapOptimizationTools
             Log("이어서 할 파이프라인 단계가 없음");
             return;
         }
+
         Log($"파이프라인 {step}단계부터 이어서 진행");
         RunStep(step);
     }
@@ -126,6 +144,7 @@ public static class MapOptimizationTools
         {
             return;
         }
+
         Log($"파이프라인 {step}단계부터 재개");
         SessionState.SetInt(StepKey, step);
         RunStep(step);
@@ -139,6 +158,7 @@ public static class MapOptimizationTools
         {
             return;
         }
+
         try
         {
             SetBatchingStatic(Category.MeshLodSet, true);
@@ -169,17 +189,19 @@ public static class MapOptimizationTools
             LOD[] lods = group.GetLODs();
             if (lods.Length == 2)
             {
-                lods[0].screenRelativeTransitionHeight = HeightFor(size, 40f, bias, tan);   // 40m부터 저사양 메시
-                lods[1].screenRelativeTransitionHeight = HeightFor(size, 150f, bias, tan);  // 150m 밖은 그리지 않음
+                lods[0].screenRelativeTransitionHeight = HeightFor(size, 40f, bias, tan); // 40m부터 저사양 메시
+                lods[1].screenRelativeTransitionHeight = HeightFor(size, 150f, bias, tan); // 150m 밖은 그리지 않음
             }
             else if (lods.Length == 1)
             {
                 float distance = size < 1.5f ? 60f : size < 3f ? 90f : 120f;
                 lods[0].screenRelativeTransitionHeight = HeightFor(size, distance, bias, tan);
             }
+
             group.SetLODs(lods);
             count++;
         }
+
         Log($"LOD Group {count}개 전환 거리 재설정 (LOD Bias {bias}: 소품 60/90/120m 컬링, 컨테이너 40m LOD1, 150m 컬링)");
     }
 
@@ -196,19 +218,37 @@ public static class MapOptimizationTools
     }
 
     [MenuItem(Menu + "Step/1 Occlusion Flags + Bake")]
-    public static void MenuOcclusion() { ApplyOcclusionFlags(); BakeOcclusion(); SaveScene(); }
+    public static void MenuOcclusion()
+    {
+        ApplyOcclusionFlags();
+        BakeOcclusion();
+        SaveScene();
+    }
 
     [MenuItem(Menu + "Step/2 LOD Groups + Bake")]
-    public static void MenuLod() { AddLodGroups(); BakeOcclusion(); SaveScene(); }
+    public static void MenuLod()
+    {
+        AddLodGroups();
+        BakeOcclusion();
+        SaveScene();
+    }
 
     [MenuItem(Menu + "Step/3 Mesh LOD Import On")]
     public static void MenuMeshLodOn() => SetMeshLodImport(true);
 
     [MenuItem(Menu + "Step/4 Batching Static Off (Mesh LOD set)")]
-    public static void MenuBatchOff() { SetBatchingStatic(Category.MeshLodSet, false); SaveScene(); }
+    public static void MenuBatchOff()
+    {
+        SetBatchingStatic(Category.MeshLodSet, false);
+        SaveScene();
+    }
 
     [MenuItem(Menu + "Revert/Batching Static On (Mesh LOD set)")]
-    public static void MenuBatchOn() { SetBatchingStatic(Category.MeshLodSet, true); SaveScene(); }
+    public static void MenuBatchOn()
+    {
+        SetBatchingStatic(Category.MeshLodSet, true);
+        SaveScene();
+    }
 
     [MenuItem(Menu + "Revert/Mesh LOD Import Off")]
     public static void MenuMeshLodOff() => SetMeshLodImport(false);
@@ -296,6 +336,7 @@ public static class MapOptimizationTools
         {
             return;
         }
+
         if (!done)
         {
             Log($"단계 {step} 벤치마크가 끝나지 않고 플레이 모드가 종료됨 - 'Continue Pipeline'으로 이 단계부터 다시 실행할 수 있음");
@@ -313,6 +354,7 @@ public static class MapOptimizationTools
         {
             return;
         }
+
         Log($"[{label}] 벤치마크 시작 요청");
         SessionState.SetBool(CullingBenchmarkRunner.DoneKey, false);
         SessionState.SetString(CullingBenchmarkRunner.PendingKey, label);
@@ -335,11 +377,13 @@ public static class MapOptimizationTools
             {
                 return false;
             }
+
             var gv = (EditorWindow)windows[0];
             if (gv.maximized == maximized)
             {
                 return false;
             }
+
             gv.maximized = maximized;
             return true;
         }
@@ -358,11 +402,13 @@ public static class MapOptimizationTools
             Log($"활성 씬이 GameScene이 아님 ({scene.name})");
             return false;
         }
+
         if (GameObject.Find(CullingBenchmarkRunner.MapStaticPath) == null)
         {
             Log("Map/Map_v1/Static을 찾지 못함");
             return false;
         }
+
         return true;
     }
 
@@ -388,6 +434,7 @@ public static class MapOptimizationTools
                 Collect(child, list);
             }
         }
+
         return list;
     }
 
@@ -398,6 +445,7 @@ public static class MapOptimizationTools
             list.Add(t.gameObject);
             return;
         }
+
         foreach (Transform child in t)
         {
             Collect(child, list);
@@ -415,10 +463,18 @@ public static class MapOptimizationTools
         if (key.StartsWith("Road_set")) return Category.Ground;
         if (key.StartsWith("Cargo_container_v1_LD2")) return Category.Container;
         if (key.StartsWith("Palet_v1") || key.StartsWith("Hangar_") || key.StartsWith("Oil_tank_")
-            || key.StartsWith("Pipes_set_v1") || key.StartsWith("Industrial_pipe")) return Category.MeshLodSet;
+            || key.StartsWith("Pipes_set_v1") || key.StartsWith("Industrial_pipe"))
+        {
+            return Category.MeshLodSet;
+        }
+
         if (key.StartsWith("Wooden_box") || key.StartsWith("Barrel_") || key.StartsWith("Dumpsters")
             || key.StartsWith("Road_block") || key.StartsWith("Conditioner") || key.StartsWith("Electric_box")
-            || key.StartsWith("Generator") || key.StartsWith("Bags_on_pallet")) return Category.SmallProp;
+            || key.StartsWith("Generator") || key.StartsWith("Bags_on_pallet"))
+        {
+            return Category.SmallProp;
+        }
+
         return Category.Large;
     }
 
@@ -444,7 +500,8 @@ public static class MapOptimizationTools
             Vector3 size = UnitBounds(unit).size;
             bool thinOrSmall = Mathf.Max(size.x, size.z) < 4f || size.y < 1.5f;
             bool occluder = cat != Category.Ground && cat != Category.SmallProp && !thinOrSmall
-                            && !key.StartsWith("Palet_v1") && !key.StartsWith("Pipes_set_v1") && !key.StartsWith("Industrial_pipe");
+                            && !key.StartsWith("Palet_v1") && !key.StartsWith("Pipes_set_v1") &&
+                            !key.StartsWith("Industrial_pipe");
 
             foreach (var t in unit.GetComponentsInChildren<Transform>(true))
             {
@@ -454,8 +511,11 @@ public static class MapOptimizationTools
                 else flags &= ~StaticEditorFlags.OccluderStatic;
                 GameObjectUtility.SetStaticEditorFlags(t.gameObject, flags);
             }
-            if (occluder) occluders++; else occludeeOnly++;
+
+            if (occluder) occluders++;
+            else occludeeOnly++;
         }
+
         Log($"오클루전 플래그: Occluder+Occludee {occluders}개, Occludee만 {occludeeOnly}개");
     }
 
@@ -467,7 +527,8 @@ public static class MapOptimizationTools
         var sw = Stopwatch.StartNew();
         bool ok = StaticOcclusionCulling.Compute();
         sw.Stop();
-        Log($"오클루전 베이크 {(ok ? "성공" : "실패")}: {sw.Elapsed.TotalSeconds:F1}초, 데이터 {StaticOcclusionCulling.umbraDataSize / 1024f:F1} KB (smallestOccluder 2, smallestHole 0.25)");
+        Log(
+            $"오클루전 베이크 {(ok ? "성공" : "실패")}: {sw.Elapsed.TotalSeconds:F1}초, 데이터 {StaticOcclusionCulling.umbraDataSize / 1024f:F1} KB (smallestOccluder 2, smallestHole 0.25)");
     }
 
     // ───────── 2. LOD Group ─────────
@@ -482,10 +543,12 @@ public static class MapOptimizationTools
                 skipped++;
                 continue;
             }
+
             Category cat = Classify(UnitKey(unit));
             if (cat == Category.Container)
             {
-                if (AddContainerLod(unit)) containers++; else skipped++;
+                if (AddContainerLod(unit)) containers++;
+                else skipped++;
             }
             else if (cat == Category.SmallProp)
             {
@@ -493,6 +556,7 @@ public static class MapOptimizationTools
                 props++;
             }
         }
+
         Log($"LOD Group 추가: 컨테이너(LD2→LD1→Culled) {containers}개, 소품(LOD0→Culled) {props}개, 건너뜀 {skipped}개");
     }
 
@@ -571,6 +635,7 @@ public static class MapOptimizationTools
             Log("ModelImporter.generateMeshLods가 없는 Unity 버전 - Mesh LOD 건너뜀");
             return;
         }
+
         PropertyInfo lodCountProp = typeof(Mesh).GetProperty("lodCount");
 
         var paths = MeshLodModelPaths().ToList();
@@ -584,13 +649,16 @@ public static class MapOptimizationTools
                 prop.SetValue(importer, enable);
                 importer.SaveAndReimport();
             }
+
             if (lodCountProp != null)
             {
                 var info = AssetDatabase.LoadAllAssetsAtPath(path).OfType<Mesh>()
-                    .Select(m => $"{m.name}(LOD {lodCountProp.GetValue(m)}, tris {Enumerable.Range(0, m.subMeshCount).Sum(i => (long)m.GetIndexCount(i)) / 3})");
+                    .Select(m =>
+                        $"{m.name}(LOD {lodCountProp.GetValue(m)}, tris {Enumerable.Range(0, m.subMeshCount).Sum(i => (long)m.GetIndexCount(i)) / 3})");
                 Log($"Mesh LOD {(enable ? "켬" : "끔")} {Path.GetFileName(path)}: {string.Join(", ", info)}");
             }
         }
+
         sw.Stop();
         Log($"Mesh LOD 임포트 설정 {(enable ? "켬" : "끔")}: 모델 {paths.Count}개, {sw.Elapsed.TotalSeconds:F1}초");
     }
@@ -607,8 +675,10 @@ public static class MapOptimizationTools
                 else flags &= ~StaticEditorFlags.BatchingStatic;
                 GameObjectUtility.SetStaticEditorFlags(t.gameObject, flags);
             }
+
             count++;
         }
+
         Log($"{category} {count}개 Batching Static {(on ? "켬" : "끔")}");
     }
 }
