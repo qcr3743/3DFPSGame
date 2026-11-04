@@ -1,6 +1,5 @@
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 // 로그인/회원가입 기능 로직. 입력 검사와 안내 문구만 담당한다.
@@ -71,7 +70,7 @@ public class UI_Login : MonoBehaviour
 
         if (_repository.CheckPassword(id, password))
         {
-            SceneManager.LoadScene(_gameSceneName);
+            SceneLoader.Load(_gameSceneName);
         }
         else
         {
