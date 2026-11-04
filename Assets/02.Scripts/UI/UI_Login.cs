@@ -38,6 +38,10 @@ public class UI_Login : MonoBehaviour
 
     private PlayerPrefsAccountRepository _repository = new PlayerPrefsAccountRepository();
 
+    // 회원가입 규칙 (정규식은 각 Specification 클래스 안에 있다)
+    private AccountIdSpecification _idSpecification = new AccountIdSpecification();
+    private AccountPasswordSpecification _passwordSpecification = new AccountPasswordSpecification();
+
     // 로그인/회원가입 링크 버튼 OnClick에 연결 (패널을 오갈 때 지난 안내 문구를 지운다)
     public void ClearMessages()
     {
@@ -71,7 +75,7 @@ public class UI_Login : MonoBehaviour
         }
         else
         {
-            _loginMessageText.text = "아이디와 비밀번호를 확인해주세요.";
+            ShowLoginMessage("아이디와 비밀번호를 확인해주세요.", true);
             return;
         }
     }
@@ -87,14 +91,35 @@ public class UI_Login : MonoBehaviour
         _signupMessage.SetActive(false);
         _passwordMismatchMessage.SetActive(false);
 
-        // Todo: ID와 비밀번호 규칙
-        // ID는 이메일
-        // 비밀번호는 영어, 특수문자, 숫자만 가능, 특수문자, 영어대문자를 각각 하나 이상 포함한 7~15글자
-        // 규칙이 여기서만 쓰일까?
-
         if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(password))
         {
             _signupMessageText.text = "아이디와 비밀번호를 입력해 주세요.";
+            _signupMessage.SetActive(true);
+            return;
+        }
+
+        // 정규표현식(정규식)
+        // 문자열에서 특정한 규칙이나 패턴을 찾기 위해 사용하는 문법
+        // - 데이터 검증 (이메일 형식, 주민번호 형식, 비밀번호 형식)
+        // - 문자열 검색 (ToDo라는게 있나?, 한국어가 있나?)
+        // - 문자열 치환 (규칙에 맞는 문자열을 찾아서 다른 문자열로 변경)
+        // - 웹 크롤링 & 파싱
+
+        // ───── ID 규칙: 이메일 형식만 허용 ─────
+
+        if (!_idSpecification.IsSatisfiedBy(id))
+        {
+            _signupMessageText.text = _idSpecification.ErrorMessage;
+            _signupMessage.SetActive(true);
+            return;
+        }
+
+        // ───── 비밀번호 규칙: 대문자, 소문자, 숫자, 기호를 모두 포함한 8~30 글자 ─────
+        // ErrorMessage에는 걸린 규칙(길이/글자 종류/조합)에 맞는 문구가 들어 있다.
+
+        if (!_passwordSpecification.IsSatisfiedBy(password))
+        {
+            _signupMessageText.text = _passwordSpecification.ErrorMessage;
             _signupMessage.SetActive(true);
             return;
         }
@@ -109,7 +134,8 @@ public class UI_Login : MonoBehaviour
         // Todo: 중복 ID 검사
         if (_repository.Exists(id))
         {
-            _loginMessageText.text = "이미 존재하는 아이디입니다.";
+            _signupMessageText.text = "이미 존재하는 아이디입니다.";
+            _signupMessage.SetActive(true);
             return;
         }
 
