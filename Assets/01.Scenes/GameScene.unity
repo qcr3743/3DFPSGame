@@ -34352,6 +34352,7 @@ MonoBehaviour:
   _stateText: {fileID: 638087880}
   _playerAnimator: {fileID: 851335909}
   _optionPopup: {fileID: 409547667}
+  _gameOverPopup: {fileID: 1886199631}
 --- !u!4 &1887714483
 Transform:
   m_ObjectHideFlags: 0

@@ -40,14 +40,16 @@ public static partial class LoginSceneBuilder
         CreateText("Hint_Password", root, "[비밀번호 규칙 안내 문구]", _fontKrRegular, 13f, TextMuted,
             TextAlignmentOptions.TopLeft);
 
-        // 비밀번호 확인 + 오류 문구 자리 (평소 비활성, 오류 표시는 내일 연결)
+        // 비밀번호 확인 + 오류 문구 자리 (평소 비활성, UI_Login.Register가 켠다)
         AddSpacer(root, 20f);
         CreateLabel(root, "Label_PasswordConfirm", "비밀번호 확인");
         AddSpacer(root, 8f);
         CreateInputField(root, "Input_PasswordConfirm", "비밀번호를 다시 입력하세요", true);
         CreateErrorMessage(root, "Error_PasswordMismatch", "비밀번호가 일치하지 않습니다");
+        // 빈 칸 등 그 밖의 가입 오류 문구 자리 (평소 비활성, UI_Login이 문구를 채워 켠다)
+        CreateErrorMessage(root, "Error_Signup", string.Empty);
 
-        // 가입하기 버튼 (OnClick은 내일 연결)
+        // 가입하기 버튼 (OnClick은 BuildCanvas에서 UI_Login.Register에 연결)
         AddSpacer(root, 28f);
         CreatePrimaryButton(root, "Button_Signup", "가입하기");
 

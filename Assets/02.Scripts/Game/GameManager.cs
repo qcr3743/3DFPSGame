@@ -19,10 +19,12 @@ public class GameManager : SingletonBehaviour<GameManager>
     [SerializeField] private TextMeshProUGUI _stateText;
     [SerializeField] private Animator _playerAnimator;
     [SerializeField] private GameObject _optionPopup;
+    [SerializeField] private GameObject _gameOverPopup;
 
     private void Start()
     {
         _optionPopup.SetActive(false);
+        _gameOverPopup.SetActive(false);
 
         StartCoroutine(StartSequence_Coroutine());
     }
@@ -61,6 +63,7 @@ public class GameManager : SingletonBehaviour<GameManager>
 
     public void GameOver()
     {
+        _gameOverPopup.SetActive(true);
         _state = GameState.GameOver;
 
         _stateText.gameObject.SetActive(true);

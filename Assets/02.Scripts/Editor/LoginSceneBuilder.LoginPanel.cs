@@ -37,12 +37,14 @@ public static partial class LoginSceneBuilder
         CreateLabel(root, "Label_Password", "비밀번호");
         AddSpacer(root, 8f);
         CreateInputField(root, "Input_Password", "비밀번호를 입력하세요", true);
+        // 로그인 오류 / 가입 완료 안내 문구 자리 (평소 비활성, UI_Login이 문구를 채워 켠다)
+        CreateErrorMessage(root, "Error_Login", string.Empty);
 
         // 아이디 저장
         AddSpacer(root, 20f);
         CreateToggle(root, "Toggle_SaveId", "아이디 저장");
 
-        // 로그인 버튼 (OnClick은 내일 연결)
+        // 로그인 버튼 (OnClick은 BuildCanvas에서 UI_Login.Login에 연결)
         AddSpacer(root, 28f);
         CreatePrimaryButton(root, "Button_Login", "로그인");
 
