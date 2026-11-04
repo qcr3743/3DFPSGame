@@ -36,6 +36,8 @@ public class UI_Login : MonoBehaviour
     [Header("기타")]
     [SerializeField] private string _gameSceneName = "GameScene"; // 로그인하면 불러올 씬
 
+    private PlayerPrefsAccountRepository _repository = new PlayerPrefsAccountRepository();
+
     // 로그인/회원가입 링크 버튼 OnClick에 연결 (패널을 오갈 때 지난 안내 문구를 지운다)
     public void ClearMessages()
     {
@@ -63,7 +65,15 @@ public class UI_Login : MonoBehaviour
             return;
         }
 
-        SceneManager.LoadScene(_gameSceneName);
+        if (_repository.CheckPassword(id, password))
+        {
+            SceneManager.LoadScene(_gameSceneName);
+        }
+        else
+        {
+            _loginMessageText.text = "아이디와 비밀번호를 확인해주세요.";
+            return;
+        }
     }
 
     // 가입하기 버튼 OnClick에 연결
@@ -97,7 +107,14 @@ public class UI_Login : MonoBehaviour
         }
 
         // Todo: 중복 ID 검사
+        if (_repository.Exists(id))
+        {
+            _loginMessageText.text = "이미 존재하는 아이디입니다.";
+            return;
+        }
+
         // Todo: 실제 회원가입 데이터 저장
+        _repository.Register(id, password);
 
         // 가입 성공: 회원가입 칸은 비우고, 로그인 칸에 방금 만든 아이디를 넣어 둔 채 로그인 패널로 돌아간다.
         _signupIdInput.text = string.Empty;
